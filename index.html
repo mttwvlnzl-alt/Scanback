@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ScanBack | Lost it? Scan it. Return it.</title>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        /* ==========================================
+           COLOR PALETTE & CSS VARIABLES
+           ========================================== */
+        :root {
+            --primary-blue: #132E4F;
+            --accent-brown: #8C4F2B;
+            --accent-gold: #D4AF37;
+            --bg-main: #FAFAF7;
+            --bg-card: #FFFFFF;
+            --text-primary: #1F2937;
+            --text-secondary: #4B5563;
+            --nav-bg: rgba(255, 255, 255, 0.9);
+            --border-color: #E5E7EB;
+            --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            --shadow-lg: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+            --transition-speed: 0.3s;
+        }
+
+        [data-theme="dark"] {
+            --primary-blue: #4A80C0;
+            --accent-brown: #E07A5F;
+            --accent-gold: #F4D06F;
+            --bg-main: #0F172A;
+            --bg-card: #1E293B;
+            --text-primary: #F8FAFC;
+            --text-secondary: #94A3B8;
+            --nav-bg: rgba(15, 23, 42, 0.9);
+            --border-color: #334155;
+            --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+            --shadow-lg: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+        }
+
+        /* ==========================================
+           RESET & GLOBAL STYLES
+           ========================================== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: background-color var(--transition-speed), color var(--transition-speed), border-color var(--transition-speed);
+        }
+
+        html {
+            scroll-behavior: smooth;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* ==========================================
+           ANIMATIONS
+           ========================================== */
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 15px rgba(140, 79, 43, 0.3); }
+            50% { transform: scale(1.03); box-shadow: 0 0 25px rgba(140, 79, 43, 0.6); }
+        }
+
+        .animate-fade-in {
+            animation: fadeInUp 0.8s ease forwards;
+        }
+
+        /* ==========================================
+           NAVIGATION BAR
+           ========================================== */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: var(--nav-bg);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            padding: 1rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 800;
+            font-size: 1.4rem;
+            color: var(--primary-blue);
+            text-decoration: none;
+        }
+
+        .nav-logo span {
+            color: var(--accent-brown);
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-primary);
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: var(--accent-brown);
+        }
+
+        .theme-toggle {
+            background: none;
+            border: 2px solid var(--border-color);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            color: var(--text-primary);
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.3s, border-color 0.3s;
+        }
+
+        .theme-toggle:hover {
+            transform: rotate(30deg);
+            border-color: var(--accent-brown);
+        }
+
+        /* ==========================================
+           HERO & TITLE SECTION
+           ========================================== */
+        .hero {
+            padding: 120px 5% 60px;
+            min-height: 85vh;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 40px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .hero-content {
+            flex: 1;
+            animation: fadeInDown 0.8s ease;
+        }
+
+        .hero-tag {
+            background: rgba(140, 79, 43, 0.1);
+            color: var(--accent-brown);
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 15px;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            color: var(--primary-blue);
+            line-height: 1.1;
+            margin-bottom: 15px;
+        }
+
+        .hero h1 span {
+            color: var(--accent-brown);
+        }
+
+        .hero-slogan {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 25px;
+            border-left: 4px solid var(--accent-brown);
+            padding-left: 12px;
+        }
+
+        .hero-description {
+            font-size: 1.05rem;
+            color: var(--text-secondary);
+            margin-bottom: 30px;
+            max-width: 550px;
+        }
+
+        .cta-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--primary-blue);
+            color: #fff;
+            padding: 14px 28px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 600;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.3s ease;
+        }
+
+        .cta-btn:hover {
+            background: var(--accent-brown);
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .hero-logo-wrapper {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .hero-logo-img {
+            max-width: 380px;
+            width: 100%;
+            border-radius: 50%;
+            border: 8px solid var(--bg-card);
+            box-shadow: var(--shadow-lg);
+            animation: pulseGlow 4s infinite ease-in-out;
+        }
+
+        /* ==========================================
+           PRODUCT SHOWCASE SECTION
+           ========================================== */
+        .section-title {
+            text-align: center;
+            font-size: 2.2rem;
+            color: var(--primary-blue);
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            color: var(--accent-brown);
+            font-weight: 600;
+            margin-bottom: 40px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.95rem;
+        }
+
+        .product-section {
+            padding: 80px 5%;
+            background: var(--bg-card);
+        }
+
+        .product-grid {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            align-items: center;
+        }
+
+        .product-img-box {
+            position: relative;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border-color);
+        }
+
+        .product-img-box img {
+            width: 100%;
+            height: auto;
+            display: block;
+            transition: transform 0.5s ease;
+        }
+
+        .product-img-box:hover img {
+            transform: scale(1.05);
+        }
+
+        .badge-coming-soon {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: var(--accent-brown);
+            color: white;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .product-features {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .feature-card {
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            padding: 16px;
+            border-radius: 12px;
+            background: var(--bg-main);
+            border: 1px solid var(--border-color);
+            transition: transform 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateX(8px);
+        }
+
+        .feature-icon {
+            background: var(--primary-blue);
+            color: white;
+            width: 45px;
+            height: 45px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        /* Perfect For Icons Grid */
+        .use-cases {
+            margin-top: 30px;
+            background: var(--bg-main);
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px dashed var(--accent-brown);
+        }
+
+        .use-cases h4 {
+            color: var(--primary-blue);
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .use-cases-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            text-align: center;
+        }
+
+        .use-case-item i {
+            font-size: 1.8rem;
+            color: var(--accent-brown);
+            margin-bottom: 5px;
+        }
+
+        .use-case-item p {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        /* ==========================================
+           FOUNDERS / TEAM SECTION
+           ========================================== */
+        .team-section {
+            padding: 80px 5%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 25px;
+            margin-top: 40px;
+        }
+
+        .team-card {
+            background: var(--bg-card);
+            border-radius: 14px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .team-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, var(--primary-blue), var(--accent-brown));
+        }
+
+        .team-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .member-img-placeholder {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: var(--border-color);
+            margin: 0 auto 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            color: var(--text-secondary);
+            border: 3px solid var(--accent-brown);
+            overflow: hidden;
+        }
+
+        .member-img-placeholder img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .member-name {
+            font-weight: 700;
+            font-size: 1.05rem;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .member-role {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--accent-brown);
+            background: rgba(140, 79, 43, 0.1);
+            padding: 2px 10px;
+            border-radius: 12px;
+            display: inline-block;
+        }
+
+        /* Dynamic highlight for Executive Leadership */
+        .executive-row {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+
+        .executive-row .team-card {
+            width: 260px;
+        }
+
+        /* ==========================================
+           CONTACT & FOOTER SECTION
+           ========================================== */
+        .contact-section {
+            background: var(--bg-card);
+            border-top: 1px solid var(--border-color);
+            padding: 60px 5% 40px;
+            text-align: center;
+        }
+
+        .facebook-box {
+            background: linear-gradient(135deg, #1877F2, #0056b3);
+            color: white;
+            padding: 35px 25px;
+            border-radius: 20px;
+            max-width: 600px;
+            margin: 30px auto;
+            box-shadow: var(--shadow-lg);
+            transition: transform 0.3s;
+        }
+
+        .facebook-box:hover {
+            transform: scale(1.02);
+        }
+
+        .facebook-box i {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+
+        .facebook-box h3 {
+            font-size: 1.6rem;
+            margin-bottom: 10px;
+        }
+
+        .facebook-box p {
+            margin-bottom: 20px;
+            opacity: 0.9;
+        }
+
+        .fb-btn {
+            display: inline-block;
+            background: white;
+            color: #1877F2;
+            padding: 12px 28px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 700;
+            transition: all 0.2s;
+        }
+
+        .fb-btn:hover {
+            background: var(--bg-main);
+            color: var(--primary-blue);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            border-top: 1px solid var(--border-color);
+        }
+
+        /* ==========================================
+           RESPONSIVE DESIGN
+           ========================================== */
+        @media (max-width: 900px) {
+            .hero {
+                flex-direction: column;
+                text-align: center;
+                padding-top: 100px;
+            }
+
+            .hero-slogan {
+                border-left: none;
+                padding-left: 0;
+            }
+
+            .product-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NAVIGATION BAR -->
+    <nav>
+        <a href="#" class="nav-logo">
+            <i class="fa-solid fa-qrcode"></i> Scan<span>Back</span>
+        </a>
+        <ul class="nav-links">
+            <li><a href="#about">About</a></li>
+            <li><a href="#product">Product</a></li>
+            <li><a href="#team">Founders</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+        <button class="theme-toggle" id="themeToggle" aria-label="Toggle Theme">
+            <i class="fa-solid fa-moon"></i>
+        </button>
+    </nav>
+
+    <!-- HERO & TITLE / PRODUCT LOGO SECTION -->
+    <section class="hero" id="about">
+        <div class="hero-content">
+            <span class="hero-tag">A Small Scan. A Big Return.</span>
+            <h1>𝐒𝐜𝐚𝐧𝐁𝐚𝐜𝐤</h1>
+            <div class="hero-slogan">Lost it? Scan it. Return it.</div>
+            <p class="hero-description">
+                <strong>ScanBack</strong> is a personalized acrylic QR code keychain designed to help owners recover their lost belongings quickly and easily. By simply scanning the QR code with any smartphone, the finder can instantly access the owner's contact information and return the item safely.
+            </p>
+            <a href="#contact" class="cta-btn">
+                <i class="fa-brands fa-facebook"></i> Get Yours Today
+            </a>
+        </div>
+        <div class="hero-logo-wrapper">
+            <!-- Reference Product Logo -->
+            <img src="logo.jfif" alt="ScanBack Official Logo" class="hero-logo-img" onerror="this.onerror=null; this.src='https://via.placeholder.com/350?text=ScanBack+Logo';">
+        </div>
+    </section>
+
+    <!-- PRODUCT SHOWCASE SECTION -->
+    <section class="product-section" id="product">
+        <h2 class="section-title">Personalized & Practical</h2>
+        <p class="section-subtitle">Designed for Convenience, Built for Peace of Mind</p>
+
+        <div class="product-grid">
+            <div class="product-img-box">
+                <span class="badge-coming-soon">COMING SOON!</span>
+                <!-- Reference Product Image -->
+                <img src="prodcut.jfif" alt="ScanBack Acrylic QR Keychain Showcase" onerror="this.onerror=null; this.src='https://via.placeholder.com/500x400?text=Product+Showcase';">
+            </div>
+
+            <div class="product-features">
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fa-solid fa-qrcode"></i></div>
+                    <div>
+                        <h3>Easy to Scan</h3>
+                        <p>Instant smartphone scanning with no special app required. Quickly connects finders to you.</p>
+                    </div>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fa-solid fa-palette"></i></div>
+                    <div>
+                        <h3>Custom Back Design</h3>
+                        <p>Features a custom QR code on the front and your choice of photo or graphic on the back.</p>
+                    </div>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fa-solid fa-shield-halved"></i></div>
+                    <div>
+                        <h3>Durable Acrylic</h3>
+                        <p>High-quality acrylic build ensures long-lasting protection for daily wear and tear.</p>
+                    </div>
+                </div>
+
+                <!-- Perfect For Icons Area -->
+                <div class="use-cases">
+                    <h4>Perfect For</h4>
+                    <div class="use-cases-grid">
+                        <div class="use-case-item">
+                            <i class="fa-solid fa-key"></i>
+                            <p>Keys</p>
+                        </div>
+                        <div class="use-case-item">
+                            <i class="fa-solid fa-bag-shopping"></i>
+                            <p>Bags</p>
+                        </div>
+                        <div class="use-case-item">
+                            <i class="fa-solid fa-wallet"></i>
+                            <p>Wallets</p>
+                        </div>
+                        <div class="use-case-item">
+                            <i class="fa-solid fa-dog"></i>
+                            <p>Collars</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOUNDERS / ORGANIZATIONAL STRUCTURE SECTION -->
+    <section class="team-section" id="team">
+        <h2 class="section-title">Organizational Structure</h2>
+        <p class="section-subtitle">Meet the Innovators Behind ScanBack</p>
+
+        <!-- Executive Leadership -->
+        <div class="executive-row">
+            <div class="team-card">
+                <div class="member-img-placeholder">
+                    <i class="fa-solid fa-user-astronaut"></i>
+                </div>
+                <div class="member-name">Samantha D. Lledo</div>
+                <div class="member-role">CEO</div>
+            </div>
+
+            <div class="team-card">
+                <div class="member-img-placeholder">
+                    <i class="fa-solid fa-user-tie"></i>
+                </div>
+                <div class="member-name">Jhon Ryan W. Yahut</div>
+                <div class="member-role">COO</div>
+            </div>
+        </div>
+
+        <!-- Team Grid -->
+        <div class="team-grid">
+            <div class="team-card">
+                <div class="member-img-placeholder"><i class="fa-solid fa-user"></i></div>
+                <div class="member-name">Mathew Valenzuela</div>
+                <div class="member-role">CPO</div>
+            </div>
+
+            <div class="team-card">
+                <div class="member-img-placeholder"><i class="fa-solid fa-user"></i></div>
+                <div class="member-name">Carl Anthony Abonita</div>
+                <div class="member-role">CSO</div>
+            </div>
+
+            <div class="team-card">
+                <div class="member-img-placeholder"><i class="fa-solid fa-user"></i></div>
+                <div class="member-name">Albert Balance</div>
+                <div class="member-role">CMO</div>
+            </div>
+
+            <div class="team-card">
+                <div class="member-img-placeholder"><i class="fa-solid fa-user"></i></div>
+                <div class="member-name">Kurt Hailey Davillo</div>
+                <div class="member-role">Team Member</div>
+            </div>
+
+            <div class="team-card">
+                <div class="member-img-placeholder"><i class="fa-solid fa-user"></i></div>
+                <div class="member-name">Rhodjan Mercader</div>
+                <div class="member-role">Team Member</div>
+            </div>
+
+            <div class="team-card">
+                <div class="member-img-placeholder"><i class="fa-solid fa-user"></i></div>
+                <div class="member-name">John Rieb Mercado</div>
+                <div class="member-role">Team Member</div>
+            </div>
+
+            <div class="team-card">
+                <div class="member-img-placeholder"><i class="fa-solid fa-user"></i></div>
+                <div class="member-name">John Louie Alburo</div>
+                <div class="member-role">Team Member</div>
+            </div>
+
+            <div class="team-card">
+                <div class="member-img-placeholder"><i class="fa-solid fa-user"></i></div>
+                <div class="member-name">Stephen Araja</div>
+                <div class="member-role">Team Member</div>
+            </div>
+
+            <div class="team-card">
+                <div class="member-img-placeholder"><i class="fa-solid fa-user"></i></div>
+                <div class="member-name">Adrylle Shane Cartago</div>
+                <div class="member-role">Team Member</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CONTACT AREA / FACEBOOK INTEGRATION -->
+    <section class="contact-section" id="contact">
+        <h2 class="section-title">Connect With Us</h2>
+        <p class="section-subtitle">Message Us to Customize Your Keychain</p>
+
+        <div class="facebook-box">
+            <i class="fa-brands fa-facebook"></i>
+            <h3>Order & Inquire via Facebook</h3>
+            <p>Ready to customize your design or ask questions? Reach out directly through our official Facebook page!</p>
+            <!-- Replace # with actual Facebook page link -->
+            <a href="https://facebook.com" target="_blank" class="fb-btn">
+                Visit ScanBack on Facebook
+            </a>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        <p>&copy; 2026 <strong>ScanBack</strong>. All Rights Reserved. | A Small Scan. A Big Return.</p>
+    </footer>
+
+    <!-- INTERACTIVE JAVASCRIPT -->
+    <script>
+        // Light / Dark Mode Switcher logic
+        const themeToggleBtn = document.getElementById('themeToggle');
+        const htmlElement = document.documentElement;
+
+        themeToggleBtn.addEventListener('click', () => {
+            const currentTheme = htmlElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            
+            htmlElement.setAttribute('data-theme', newTheme);
+            
+            // Toggle Icon
+            const icon = themeToggleBtn.querySelector('i');
+            if (newTheme === 'dark') {
+                icon.className = 'fa-solid fa-sun';
+            } else {
+                icon.className = 'fa-solid fa-moon';
+            }
+        });
+    </script>
+</body>
+</html>
